@@ -1,4 +1,5 @@
 #include "CppJsonLexer.h"
+#include "dfa.h"
 
 namespace cppjson {
 	std::string toString(const TokenType type) {
@@ -33,43 +34,92 @@ namespace cppjson {
 
 		return without_whitespace;
 	}
+	
+	std::vector<std::string> split(std::string str) {
+		std::stringstream ss(str);
+		std::vector<std::string> file_context;
+		
+		std::string line;
+		
+		while(std::getline(ss, line, '\n')) {
+			if(line.back() == '\r') line.pop_back();
+			file_context.push_back(line);
+		}
+		
+		return file_context;
+	}
+	
+	TokenType getType(int state) {
+			switch (state) {
+			case  5: return TokenType::NUMBER;
+			case 11: return TokenType::STRING;
+			case 12: return TokenType::NUMBER;
+			case 13: return TokenType::BOOLEAN;
+			case 14: return TokenType::BOOLEAN;
+			case 15: return TokenType::LBRACE;
+			case 16: return TokenType::RBRACE;
+			case 17: return TokenType::LBRACKET;
+			case 18: return TokenType::RBRACKET;
+			case 19: return TokenType::COLON;
+			case 20: return TokenType::COMMA;
+			case 21: return TokenType::WHITESPACE;
+			case 26: return TokenType::T_NULL;
+			}
 
+			throw 0xFFFFFFFD;
+		}
+	
 	std::vector<Token> tokenize(std::string json_str) {
-		auto base = json_str.begin();
-		auto curr = json_str.begin();
-
-		int pre_s = 0;
-		int state = 0;
-
+		int line_no = 0;
+		int pos = 1;
+		
+		std::vector<std::string> str_list = split(json_str);
 		std::vector<Token> token_list;
-
-		while (base != json_str.end()) {
-			pre_s = state;
-			state = (curr != json_str.end()) ? dfa::transition(state, *curr) : -1;
-			if (state == -1) {
-				if (dfa::isAccepted(pre_s)) {
+		
+		dfa::dfa json_dfa = dfa::buildDFA();
+		
+		for(const std::string& line : str_list) {
+			line_no++;
+			pos = 1;
+			
+			int pre_s = 0;
+			int state = 0;
+			
+			auto base = line.begin();
+			auto curr = line.begin();
+			while(base != line.end()) {
+				pre_s = state;
+				state = (curr != line.end()) ? json_dfa.trans(state, *curr) : -1;
+				
+				if (state == -1) {
+					if(!json_dfa.isFinal(pre_s))
+						throw TokenizeFailedException(line_no, pos);
+					
 					token_list.push_back({
-						dfa::getType(pre_s),
-						std::string(base, curr)
-						});
-
+						getType(pre_s),
+						std::string(base, curr),
+						line_no,
+						pos
+					});
+					
 					state = 0;
 					base = curr;
 				}
 				else {
-					throw 0xFFFFFFFE;
+					curr++;
+					pos++;
 				}
 			}
-			else {
-				curr++;
-			}
 		}
-
+		
 		return remove_whitespace(token_list);
 	}
+	
+	/**********/
 
-	namespace dfa {
+	/*namespace dfa {
 		int transition(int state, char in) {
+		
 			if (state == 0) {
 				if (in == '\"') return 1;
 				if (in == '-') return 2;
@@ -91,6 +141,7 @@ namespace cppjson {
 
 			if (state == 1) {
 				if (in == '\"') return 11;
+				if (in == '\\') return 27;
 				else return 1;
 			}
 
@@ -159,6 +210,10 @@ namespace cppjson {
 				if (in == 'l') return 26;
 				else return -1;
 			}
+			
+			if (state == 27) {
+				return 1;
+			}
 
 			return -1;
 		}
@@ -202,7 +257,7 @@ namespace cppjson {
 			case 26: return TokenType::T_NULL;
 			}
 
-			throw 0xFFFFFFFE;
+			throw 0xFFFFFFFD;
 		}
-	}
+	}*/
 }
