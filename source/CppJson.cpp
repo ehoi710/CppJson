@@ -31,6 +31,7 @@ namespace cppjson {
 
 	Json& Json::operator=(std::shared_ptr<JsonBase> json) {
 		this->json = json;
+		return *this;
 	}
 	
 	std::string Json::toString() const {

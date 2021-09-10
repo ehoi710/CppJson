@@ -19,6 +19,24 @@ private:
 	std::string err_msg;
 };
 
+class TokenizeFailedException : public std::exception {
+public:
+	TokenizeFailedException(int line, int pos) {
+		this->line = line;
+		this->pos = pos;
+	}
+	
+	int getLine() {
+		return line;
+	}
+	int getPos() {
+		return pos;
+	}
+	
+private:
+	int line, pos;
+};
+
 }
 
 #endif

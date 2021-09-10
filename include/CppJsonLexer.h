@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 #include <regex>
+#include <sstream>
+
+#include "CppJsonException.h"
+#include "dfa.h"
 
 namespace cppjson {
 	enum class TokenType {
