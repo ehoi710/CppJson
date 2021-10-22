@@ -1,5 +1,7 @@
 # CppJson
 
+project for my study
+
 ## v1.3
 
 Fix:
