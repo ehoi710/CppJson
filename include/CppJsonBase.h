@@ -13,11 +13,13 @@ namespace cppjson {
 
 	class JsonBase {
 	public:
+		virtual ~JsonBase() {}
+
 		virtual std::string toString() const { throw NotImplementedException(); }
 		virtual double toNumber() const { throw NotImplementedException(); }
 		virtual bool toBoolean() const { throw NotImplementedException(); }
-		virtual std::shared_ptr<JsonBase> find(std::string key) const { throw NotImplementedException(); }
-		virtual std::shared_ptr<JsonBase> get(size_t idx) const { throw NotImplementedException(); }
+		virtual JsonBase* find(std::string key) const { throw NotImplementedException(); }
+		virtual JsonBase* get(size_t idx) const { throw NotImplementedException(); }
 	};
 
 	class JsonString : public JsonBase {
@@ -58,29 +60,33 @@ namespace cppjson {
 
 	class JsonObject : public JsonBase {
 	public:
-		using Entry = std::pair<std::shared_ptr<JsonString>, std::shared_ptr<JsonBase>>;
+		using Entry = std::pair<JsonString*, JsonBase*>;
 
 	public:
 		JsonObject();
 		JsonObject(std::vector<Entry> map);
 
-		std::shared_ptr<JsonBase> find(std::string key) const;
+		~JsonObject();
+
+		JsonBase* find(std::string key) const;
 		std::string toString() const;
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<JsonBase>> map;
+		std::unordered_map<std::string, JsonBase*> map;
 	};
 
 	class JsonArray : public JsonBase {
 	public:
 		JsonArray();
-		JsonArray(std::vector<std::shared_ptr<JsonBase>> array);
+		JsonArray(std::vector<JsonBase*> array);
 
-		std::shared_ptr<JsonBase> get(size_t idx) const;
+		~JsonArray();
+
+		JsonBase* get(size_t idx) const;
 		std::string toString() const;
 
 	private:
-		std::vector<std::shared_ptr<JsonBase>> array;
+		std::vector<JsonBase*> array;
 	};
 
 	class JsonNull : public JsonBase {

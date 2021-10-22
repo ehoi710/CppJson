@@ -12,8 +12,11 @@ namespace cppjson {
 	Json::Json() {
 		this->json = nullptr;
 	}
-	Json::Json(std::shared_ptr<JsonBase> json) {
+	Json::Json(JsonBase* json) {
 		this->json = json;
+	}
+	Json::~Json() {
+		delete this->json;
 	}
 
 	Json::operator std::string() {
@@ -37,7 +40,7 @@ namespace cppjson {
 		return json->get(idx);
 	}
 
-	Json& Json::operator=(std::shared_ptr<JsonBase> json) {
+	Json& Json::operator=(JsonBase* json) {
 		this->json = json;
 		return *this;
 	}

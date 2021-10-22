@@ -12,7 +12,8 @@ namespace cppjson {
 	class Json {
 	public:
 		Json();
-		Json(std::shared_ptr<JsonBase> json);
+		Json(JsonBase* json);
+		~Json();
 
 		operator std::string();
 		operator double();
@@ -22,14 +23,14 @@ namespace cppjson {
 		Json operator[](std::string key);
 		Json operator[](int idx);
 
-		Json& operator=(std::shared_ptr<JsonBase> json);
+		Json& operator=(JsonBase* json);
 		
 		std::string toString() const;
 		
 		static Json loadFromFile(std::string file_name);
 
 	private:
-		std::shared_ptr<JsonBase> json;
+		JsonBase* json;
 	};
 }
 

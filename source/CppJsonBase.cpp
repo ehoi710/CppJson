@@ -47,7 +47,13 @@ JsonObject::JsonObject(std::vector<Entry> map) : map() {
 	}
 }
 
-std::shared_ptr<JsonBase> JsonObject::find(std::string key) const {
+JsonObject::~JsonObject() {
+	for (auto entry : map) {
+		delete entry.second;
+	}
+}
+
+JsonBase* JsonObject::find(std::string key) const {
 	auto it = map.find(key);
 	if(it == map.end()) {
 		throw ValueNotFoundException(key);
@@ -74,9 +80,14 @@ std::string JsonObject::toString() const {
 /**********/
 
 JsonArray::JsonArray() : array() { }
-JsonArray::JsonArray(std::vector<std::shared_ptr<JsonBase>> array) : array(array) { }
+JsonArray::JsonArray(std::vector<JsonBase*> array) : array(array) { }
+JsonArray::~JsonArray() {
+	for(auto entry : array) {
+		delete entry;
+	}
+}
 
-std::shared_ptr<JsonBase> JsonArray::get(size_t idx) const {
+JsonBase* JsonArray::get(size_t idx) const {
 	if (idx >= array.size()) {
 		throw ArrayOutOfBoundException(idx, array.size());
 	}
