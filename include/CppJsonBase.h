@@ -13,7 +13,11 @@ namespace cppjson {
 
 	class JsonBase {
 	public:
-		virtual std::string toString() const = 0;
+		virtual std::string toString() const { throw NotImplementedException(); }
+		virtual double toNumber() const { throw NotImplementedException(); }
+		virtual bool toBoolean() const { throw NotImplementedException(); }
+		virtual std::shared_ptr<JsonBase> find(std::string key) const { throw NotImplementedException(); }
+		virtual std::shared_ptr<JsonBase> get(size_t idx) const { throw NotImplementedException(); }
 	};
 
 	class JsonString : public JsonBase {

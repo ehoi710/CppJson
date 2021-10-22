@@ -2,39 +2,86 @@
 #define __CPPJSONEXCEPTION__
 
 #include <exception>
+#include <sstream>
 #include <string>
+
+#include <stdio.h>
 
 namespace cppjson {
 
-class ValueNotFoundException : public std::exception {
+class CppJsonException : public std::exception {
 public:
-	ValueNotFoundException(std::string key) {
-		err_msg = "The value corresponding to the key \"" + key + "\" does not exist";
+	CppJsonException() {
+		this->message = "";
 	}
-	const char* what() const noexcept {
-		return err_msg.c_str();
-	}
-
-private:
-	std::string err_msg;
-};
-
-class TokenizeFailedException : public std::exception {
-public:
-	TokenizeFailedException(int line, int pos) {
-		this->line = line;
-		this->pos = pos;
+	CppJsonException(std::string message) {
+		this->message = message;
 	}
 	
-	int getLine() {
-		return line;
+	virtual const char* what() const noexcept {
+		return message.c_str();
 	}
-	int getPos() {
-		return pos;
+	
+protected:
+	std::string message;
+};
+
+class ValueNotFoundException : public CppJsonException {
+public:
+	ValueNotFoundException(std::string key) {
+		message = "The value corresponding to the key \"" + key + "\" does not exist";
 	}
+};
+
+class TokenizeFailedException : public CppJsonException {
+public:
+	TokenizeFailedException(int line, int pos) : line(line), pos(pos) {	}
+	
+	int getLine() { return line; }
+	int getPos()  { return pos;  }
 	
 private:
 	int line, pos;
+};
+
+class ParsingFailedException : public CppJsonException {
+public:
+	ParsingFailedException(int line, int pos, std::string message) : 
+		line(line), pos(pos), CppJsonException(message) { }
+	
+	int getLine() { return line; }
+	int getPos()  { return pos; }
+
+private:
+	int line, pos;
+};
+
+class ArrayOutOfBoundException : public CppJsonException {
+public:
+	ArrayOutOfBoundException(int idx, int size) {
+		this->idx = idx;
+		this->size = size;
+		
+		std::stringstream ss;
+		ss << "Index " << idx << " is out of array bound " << size << "\n";
+		message = ss.str();
+	}
+	
+private:
+	int idx;
+	int size;
+};
+
+class NotImplementedException : public CppJsonException {
+public:
+	NotImplementedException() {}
+
+	const char* what() {
+		return "Not Implemented";
+	}
+
+private:
+
 };
 
 }

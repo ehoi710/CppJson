@@ -3,17 +3,17 @@
 namespace cppjson {
 	std::string toString(const TokenType type) {
 		switch (type) {
-		case TokenType::LBRACE: return "Left brace";
-		case TokenType::RBRACE: return "Right brace";
-		case TokenType::LBRACKET: return "Left bracket";
-		case TokenType::RBRACKET: return "Right bracket";
-		case TokenType::COLON: return "Colon";
-		case TokenType::COMMA: return "Comma";
+		case TokenType::LBRACE:     return "Left brace";
+		case TokenType::RBRACE:     return "Right brace";
+		case TokenType::LBRACKET:   return "Left bracket";
+		case TokenType::RBRACKET:   return "Right bracket";
+		case TokenType::COLON:      return "Colon";
+		case TokenType::COMMA:      return "Comma";
 		case TokenType::WHITESPACE: return "White space";
-		case TokenType::NUMBER: return "Number";
-		case TokenType::STRING: return "String";
-		case TokenType::BOOLEAN: return "Boolean";
-		case TokenType::T_NULL: return "Null";
+		case TokenType::NUMBER:     return "Number";
+		case TokenType::STRING:     return "String";
+		case TokenType::BOOLEAN:    return "Boolean";
+		case TokenType::T_NULL:     return "Null";
 		}
 
 		throw 0xFFFFFFFF;
@@ -61,18 +61,19 @@ namespace cppjson {
 		
 		while(std::getline(ss, line, '\n')) {
 			if(line.back() == '\r') line.pop_back();
+			
 			list.push_back(line);
 		}
 		
 		return list;
 	}
 	
-	std::vector<Token> tokenize(std::string json_str) {
+	std::vector<Token> tokenize(std::vector<std::string> str_list) {
 		std::vector<Token> token_list;
 		int line_no = 0;
-		int pos = 0;
 		
-		std::vector<std::string> str_list = split(json_str);
+		int pos = 0;
+		int tpos = 0;
 		
 		dfa::dfa json_dfa = dfa::buildDFA();
 		
@@ -96,11 +97,13 @@ namespace cppjson {
 						
 					token_list.push_back({
 						getType(pre_s),
-						std::string(base, curr)
+						std::string(base, curr),
+						line_no, tpos
 					});
 					
 					state = 0;
 					base = curr;
+					tpos = pos;
 				}
 				else {
 					curr++;

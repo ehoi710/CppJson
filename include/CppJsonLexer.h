@@ -20,6 +20,7 @@ namespace cppjson {
 	struct Token {
 		TokenType type;
 		std::string value;
+		int line, pos;
 	};
 
 	namespace dfa {
@@ -31,9 +32,11 @@ namespace cppjson {
 
 	std::string toString(const TokenType type);
 	std::string toString(const Token& tok);
+	
+	std::vector<std::string> split(std::string str);
 
 	std::vector<Token> remove_whitespace(std::vector<Token> token_list);
-	std::vector<Token> tokenize(std::string json_str);
+	std::vector<Token> tokenize(std::vector<std::string> str_list);
 }
 
 #endif

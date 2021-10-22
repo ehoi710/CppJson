@@ -7,6 +7,7 @@
 
 #include "CppJsonBase.h"
 #include "CppJsonLexer.h"
+#include "CppJsonException.h"
 
 namespace cppjson {
 	using token_iterator = std::vector<Token>::const_iterator;

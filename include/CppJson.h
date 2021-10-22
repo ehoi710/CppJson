@@ -1,6 +1,9 @@
 #ifndef __CPPJSON__
 #define __CPPJSON__
 
+#include <stdio.h>
+#include <fstream>
+
 #include "CppJsonBase.h"
 #include "CppJsonLexer.h"
 #include "CppJsonParser.h"
@@ -8,7 +11,7 @@
 namespace cppjson {
 	class Json {
 	public:
-		Json(std::string json_str);
+		Json();
 		Json(std::shared_ptr<JsonBase> json);
 
 		operator std::string();
@@ -22,6 +25,8 @@ namespace cppjson {
 		Json& operator=(std::shared_ptr<JsonBase> json);
 		
 		std::string toString() const;
+		
+		static Json loadFromFile(std::string file_name);
 
 	private:
 		std::shared_ptr<JsonBase> json;

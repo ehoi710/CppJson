@@ -11,5 +11,10 @@ bin/%.o: source/%.cpp
 	g++ -c -o $@ -Iinclude $<
 
 clean:
+ifeq ($(OS), Windows_NT)
+	del /q bin
+	del /q lib
+else
 	rm -rf bin/*
 	rm -rf lib/*
+endif

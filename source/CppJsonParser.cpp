@@ -2,7 +2,14 @@
 
 namespace cppjson {
 	void consume(token_iterator& cur, TokenType type) {
-		if (cur->type != type) throw ("Token type is not " + toString(type)); cur++;
+		if (cur->type != type) 
+			throw ParsingFailedException(
+				cur->line, cur->pos, 
+				std::string("unexpected token " + toString(cur->type) + 
+				            " founded instead " + toString(type))
+			); 
+			
+		cur++;
 	}
 
 	std::shared_ptr<JsonBase> parse(const std::vector<Token>& token_list) {
@@ -12,12 +19,12 @@ namespace cppjson {
 
 	std::shared_ptr<JsonBase> parse_element(token_iterator& cur) {
 		switch (cur->type) {
-		case TokenType::LBRACE: return parse_object(cur);
+		case TokenType::LBRACE:   return parse_object(cur);
 		case TokenType::LBRACKET: return parse_array(cur);
-		case TokenType::NUMBER: return parse_number(cur);
-		case TokenType::STRING: return parse_string(cur);
-		case TokenType::BOOLEAN: return parse_boolean(cur);
-		case TokenType::T_NULL: return parse_null(cur);
+		case TokenType::NUMBER:   return parse_number(cur);
+		case TokenType::STRING:   return parse_string(cur);
+		case TokenType::BOOLEAN:  return parse_boolean(cur);
+		case TokenType::T_NULL:   return parse_null(cur);
 		}
 
 		throw 0xFFFFFFFB;
@@ -42,7 +49,10 @@ namespace cppjson {
 
 	std::shared_ptr<JsonObject> parse_object(token_iterator& cur) {
 		consume(cur, TokenType::LBRACE);
-		if (cur->type == TokenType::RBRACE) return std::shared_ptr<JsonObject>(new JsonObject());
+		if (cur->type == TokenType::RBRACE) {
+			cur++;
+			return std::shared_ptr<JsonObject>(new JsonObject());
+		}
 
 		std::vector<object_entry> map;
 
@@ -51,6 +61,7 @@ namespace cppjson {
 		std::shared_ptr<JsonBase> elem = parse_element(cur);
 
 		map.push_back(object_entry(str, elem));
+		
 		while (cur->type != TokenType::RBRACE) {
 			consume(cur, TokenType::COMMA);
 
@@ -67,8 +78,11 @@ namespace cppjson {
 
 	std::shared_ptr<JsonArray> parse_array(token_iterator& cur) {
 		consume(cur, TokenType::LBRACKET);
-
-		if (cur->type == TokenType::RBRACKET) return std::shared_ptr<JsonArray>(new JsonArray());
+		if (cur->type == TokenType::RBRACKET) {
+			cur++;
+			return std::shared_ptr<JsonArray>(new JsonArray());
+			
+		}
 
 		std::vector<std::shared_ptr<JsonBase>> array;
 

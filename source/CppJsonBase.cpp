@@ -78,7 +78,7 @@ JsonArray::JsonArray(std::vector<std::shared_ptr<JsonBase>> array) : array(array
 
 std::shared_ptr<JsonBase> JsonArray::get(size_t idx) const {
 	if (idx >= array.size()) {
-		throw 0xFFFFFFFC;
+		throw ArrayOutOfBoundException(idx, array.size());
 	}
 	else {
 		return array[idx];
