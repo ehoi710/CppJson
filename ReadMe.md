@@ -1,5 +1,10 @@
 # CppJson
 
+## v1.3
+
+Fix:
+	shared pointer changed common pointer
+
 ## v1.2
 
 Fix:
