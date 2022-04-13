@@ -1,64 +1,58 @@
-#include <vector>
-#include <algorithm>
-
 #include "dfa.h"
 
-namespace dfa {
-	dfa buildDFA() {
-		dfa json_dfa({
-			5, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 26
-		});
-		
-		json_dfa.addTransit(0, '\"', 1);
-		json_dfa.addTransit(0, '-', 2);
-		json_dfa.addTransit(0, 't', 3);
-		json_dfa.addTransit(0, 'f', 4);
-		json_dfa.addTransit(0, '0', 12);
-		for(int i = 0; i < 10; i++) json_dfa.addTransit(0, '0'+i, 5);
-		json_dfa.addTransit(0, '{', 15);
-		json_dfa.addTransit(0, '}', 16);
-		json_dfa.addTransit(0, '[', 17);
-		json_dfa.addTransit(0, ']', 18);
-		json_dfa.addTransit(0, ':', 19);
-		json_dfa.addTransit(0, ',', 20);
-		json_dfa.addTransit(0, ' ', 21);
-		json_dfa.addTransit(0, '\n', 21);
-		json_dfa.addTransit(0, '\t', 21);
-		json_dfa.addTransit(0, 'n', 23);
-		
-		for(int i = 0; i < 128; i++) json_dfa.addTransit(1, i, 1);
-		json_dfa.addTransit(1, '\"', 11);
-		json_dfa.addTransit(1, '\\', 27);
-		
-		for(int i = 0; i < 10;  i++) json_dfa.addTransit(2, '0'+i, 5);
-		
-		json_dfa.addTransit(3, 'r', 6);
-		
-		json_dfa.addTransit(4, 'a', 7);
-		
-		for(int i = 0; i < 10; i++) json_dfa.addTransit(5, '0'+i, 5);
-		json_dfa.addTransit(5, '.', 22);
-		
-		json_dfa.addTransit(6, 'u', 8);
-		
-		json_dfa.addTransit(7, 'l', 9);
-		
-		json_dfa.addTransit(8, 'e', 13);
-		
-		json_dfa.addTransit(9, 's', 10);
-		
-		json_dfa.addTransit(10, 'e', 14);
-		
-		for(int i = 0; i < 10; i++) json_dfa.addTransit(22, '0'+i, 5);
-		
-		json_dfa.addTransit(23, 'u', 24);
-		
-		json_dfa.addTransit(24, 'l', 25);
-		
-		json_dfa.addTransit(25, 'l', 26);
-		
-		for(int i = 0; i < 128; i++) json_dfa.addTransit(27, i, 1);
-		
-		return json_dfa;
+namespace cppjson {
+	namespace dfa {
+		// 수동으로 만든 dfa.
+		dfa buildDFA() {
+			dfa d({
+				5, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 26
+			});
+
+			d.transTable['\"'][0] = 1;
+			d.transTable['-'][0] = 2;
+			d.transTable['t'][0] = 3;
+			d.transTable['f'][0] = 4;
+			for(int i = 0; i < 10; i++) d.transTable['0' + i][0] = 5;
+			d.transTable['{'][0] = 15;
+			d.transTable['}'][0] = 16;
+			d.transTable['['][0] = 17;
+			d.transTable[']'][0] = 18;
+			d.transTable[':'][0] = 19;
+			d.transTable[','][0] = 20;
+			d.transTable[' '][0] = 21;
+			d.transTable['\n'][0] = 21;
+			d.transTable['\t'][0] = 21;
+			d.transTable['n'][0] = 23;
+			
+			for(int i = 0; i < 128; i++) d.transTable[i][1] = 1;
+			d.transTable['\"'][1] = 11;
+			
+			for(int i = 0; i < 10; i++) d.transTable['0' + i][2] = 5;
+			
+			d.transTable['r'][3] = 6;
+			
+			d.transTable['a'][4] = 7;
+			
+			for(int i = 0; i < 10; i++) d.transTable['0' + i][5] = 5;
+			d.transTable['.'][5] = 22;
+			
+			d.transTable['u'][6] = 8;
+			
+			d.transTable['l'][7] = 9;
+			
+			d.transTable['e'][8] = 13;
+			
+			d.transTable['s'][9] = 10;
+			
+			d.transTable['e'][10] = 14;
+			
+			for(int i = 0; i < 10; i++) d.transTable['0' + i][22] = 22;
+			
+			d.transTable['u'][23] = 24;
+			d.transTable['l'][24] = 25;
+			d.transTable['l'][25] = 26;
+			
+			return d;
+		}
 	}
 }
