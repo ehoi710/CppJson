@@ -6,7 +6,7 @@
 
 int main(int argc, char* argv[]) {
 	cppjson::Json j = cppjson::Json::loadFromFile(argv[1]);
-	std::cout << j << std::endl;
+	std::cout << j[1] << std::endl;
 	
 	return 0;
 }

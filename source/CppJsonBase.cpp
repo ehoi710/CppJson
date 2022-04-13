@@ -54,7 +54,7 @@ JsonObject::~JsonObject() {
 }
 
 JsonBase* JsonObject::find(std::string key) const {
-	auto it = map.find(key);
+	auto it = map.find('\"' + key + '\"');
 	if(it == map.end()) {
 		throw ValueNotFoundException(key);
 	}

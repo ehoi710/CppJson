@@ -2,6 +2,7 @@
 
 namespace cppjson {
 	namespace dfa {
+		// 수동으로 만든 dfa.
 		dfa buildDFA() {
 			dfa d({
 				5, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 26

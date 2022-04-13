@@ -76,7 +76,7 @@ class NotImplementedException : public CppJsonException {
 public:
 	NotImplementedException() {}
 
-	const char* what() {
+	const char* what() const noexcept {
 		return "Not Implemented";
 	}
 
